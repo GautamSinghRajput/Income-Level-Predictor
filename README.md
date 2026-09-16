@@ -1,4 +1,4 @@
-# SalaryIQ — Numeric Salary Prediction Engine
+Income Level Predictor — Numeric Salary Prediction Engine
 ## B.Tech CSE End-to-End Machine Learning Project
 
 A full-stack ML web application that predicts **actual dollar salary values** (not just income classes) using an ensemble of five algorithms trained on the UCI Adult Census dataset, with optional Gemini AI explanations.
