@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Income ML — Machine Learning Income Predictor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ── HERO ─────────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <nav class="nav">
+    <span class="nav-logo">INCOME<span>ML</span></span>
+    <div class="nav-links">
+      <a href="#predictor">Predictor</a>
+      <a href="#insights">Insights</a>
+      <a href="#algorithms">Models</a>
+    </div>
+    <span class="nav-badge">B.Tech CSE · ML Project</span>
+  </nav>
+  <div class="hero-content">
+    <div class="hero-chip">UCI Adult Census Dataset · Machine Learning</div>
+    <h1 class="hero-title">Income Level<br/><em>Prediction Engine</em></h1>
+    <p class="hero-sub">Ridge Regression · Decision Trees · Bagging Ensemble · LDA · DBSCAN<br/>powered by trained model weights — not static rules</p>
+    <div class="hero-metrics" id="heroMetrics">
+      <div class="metric-pill"><span class="mp-val" id="mpBaggingR2">—</span><span class="mp-lab">Bagging R²</span></div>
+      <div class="metric-pill"><span class="mp-val" id="mpLdaAcc">—</span><span class="mp-lab">LDA Accuracy</span></div>
+      <div class="metric-pill"><span class="mp-val" id="mpMAE">—</span><span class="mp-lab">Bagging MAE</span></div>
+      <div class="metric-pill"><span class="mp-val" id="mpTrainSize">—</span><span class="mp-lab">Training Samples</span></div>
+    </div>
+    <a href="#predictor" class="hero-cta">Launch Predictor →</a>
+  </div>
+</header>
+
+<!-- ── PREDICTOR ─────────────────────────────────────────────── -->
+<section class="section" id="predictor">
+  <div class="container">
+    <div class="section-header">
+      <h2>Income Profile</h2>
+      <p>Enter demographic details — the ensemble ML model will estimate a realistic annual salary.</p>
+    </div>
+
+    <div class="predictor-grid">
+      <!-- LEFT: Form -->
+      <div class="form-panel glass">
+        <div class="form-group-row">
+          <div class="form-group">
+            <label>Age</label>
+            <input type="number" id="age" min="17" max="90" value="35" class="inp" />
+          </div>
+          <div class="form-group">
+            <label>Education Years <span class="hint">(HS=9, BSc=13, MSc=14, PhD=16)</span></label>
+            <input type="number" id="eduNum" min="1" max="16" value="13" class="inp" />
+          </div>
+        </div>
+
+        <div class="form-group-row">
+          <div class="form-group">
+            <label>Education Level</label>
+            <select id="education" class="inp">
+              <option>Preschool</option><option>1st-4th</option><option>5th-6th</option>
+              <option>7th-8th</option><option>9th</option><option>10th</option>
+              <option>11th</option><option>12th</option><option>HS-grad</option>
+              <option>Some-college</option><option>Assoc-voc</option><option>Assoc-acdm</option>
+              <option selected>Bachelors</option><option>Masters</option><option>Prof-school</option>
+              <option>Doctorate</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Occupation</label>
+            <select id="occupation" class="inp">
+              <option>Adm-clerical</option><option>Armed-Forces</option><option>Craft-repair</option>
+              <option selected>Exec-managerial</option><option>Farming-fishing</option>
+              <option>Handlers-cleaners</option><option>Machine-op-inspct</option><option>Other-service</option>
+              <option>Priv-house-serv</option><option>Prof-specialty</option><option>Protective-serv</option>
+              <option>Sales</option><option>Tech-support</option><option>Transport-moving</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group-row">
+          <div class="form-group">
+            <label>Work Class</label>
+            <select id="workclass" class="inp">
+              <option>Federal-gov</option><option>Local-gov</option><option>Never-worked</option>
+              <option selected>Private</option><option>Self-emp-inc</option><option>Self-emp-not-inc</option>
+              <option>State-gov</option><option>Without-pay</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Marital Status</label>
+            <select id="marital" class="inp">
+              <option>Divorced</option><option>Married-AF-spouse</option>
+              <option selected>Married-civ-spouse</option><option>Married-spouse-absent</option>
+              <option>Never-married</option><option>Separated</option><option>Widowed</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group-row">
+          <div class="form-group">
+            <label>Relationship</label>
+            <select id="relationship" class="inp">
+              <option>Husband</option><option>Not-in-family</option><option>Other-relative</option>
+              <option>Own-child</option><option>Unmarried</option><option>Wife</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Race</label>
+            <select id="race" class="inp">
+              <option>Amer-Indian-Eskimo</option><option>Asian-Pac-Islander</option>
+              <option>Black</option><option>Other</option><option selected>White</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group-row">
+          <div class="form-group">
+            <label>Sex</label>
+            <select id="sex" class="inp">
+              <option selected>Male</option><option>Female</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Native Country</label>
+            <select id="nativeCountry" class="inp">
+              <option selected>United-States</option><option>Cambodia</option><option>Canada</option>
+              <option>China</option><option>Columbia</option><option>Cuba</option>
+              <option>Dominican-Republic</option><option>Ecuador</option><option>El-Salvador</option>
+              <option>England</option><option>France</option><option>Germany</option>
+              <option>Greece</option><option>Guatemala</option><option>Haiti</option>
+              <option>Holand-Netherlands</option><option>Honduras</option><option>Hong</option>
+              <option>Hungary</option><option>India</option><option>Iran</option>
+              <option>Ireland</option><option>Italy</option><option>Jamaica</option>
+              <option>Japan</option><option>Laos</option><option>Mexico</option>
+              <option>Nicaragua</option><option>Outlying-US(Guam-USVI-etc)</option>
+              <option>Peru</option><option>Philippines</option><option>Poland</option>
+              <option>Portugal</option><option>Puerto-Rico</option><option>Scotland</option>
+              <option>South</option><option>Taiwan</option><option>Thailand</option>
+              <option>Trinadad&amp;Tobago</option><option>Vietnam</option><option>Yugoslavia</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group-row">
+          <div class="form-group">
+            <label>Hours / Week</label>
+            <input type="number" id="hours" min="1" max="99" value="45" class="inp" />
+          </div>
+          <div class="form-group">
+            <label>Capital Gain ($)</label>
+            <input type="number" id="capGain" min="0" value="0" class="inp" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Capital Loss ($)</label>
+          <input type="number" id="capLoss" min="0" value="0" class="inp" style="max-width:240px" />
+        </div>
+
+        <button class="btn-predict" id="btnPredict" onclick="runPrediction()">
+          <span class="btn-icon">◈</span>
+          Predict Salary
+        </button>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div class="results-panel" id="resultsPanel">
+        <div class="results-placeholder" id="resultsPlaceholder">
+          <div class="placeholder-icon">◈</div>
+          <p>Fill in the form and click <strong>Predict Salary</strong> to see the ML ensemble output with confidence intervals.</p>
+        </div>
+
+        <div id="resultsContent" style="display:none">
+          <!-- Salary card -->
+          <div class="salary-card">
+            <div class="salary-label">Estimated Annual Salary</div>
+            <div class="salary-value" id="salaryValue">$0</div>
+            <div class="salary-range">
+              <span id="salaryLow">$0</span>
+              <div class="salary-bar">
+                <div class="salary-fill" id="salaryFill"></div>
+                <div class="salary-needle" id="salaryNeedle"></div>
+              </div>
+              <span id="salaryHigh">$0</span>
+            </div>
+            <div class="salary-range-label">68% Confidence Interval</div>
+          </div>
+
+          <!-- Confidence & high-income prob -->
+          <div class="stat-row">
+            <div class="stat-box">
+              <div class="stat-val" id="confVal">—</div>
+              <div class="stat-lab">Model Confidence</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-val" id="hiIncProb">—</div>
+              <div class="stat-lab">Prob. &gt;$50K Income</div>
+            </div>
+          </div>
+
+          <!-- Individual model predictions -->
+          <div class="model-preds glass">
+            <h4>Individual Model Outputs</h4>
+            <div class="model-pred-row">
+              <span class="model-tag ridge">Ridge</span>
+              <div class="pred-bar-wrap"><div class="pred-bar" id="barRidge"></div></div>
+              <span class="pred-val" id="valRidge">—</span>
+            </div>
+            <div class="model-pred-row">
+              <span class="model-tag tree">Decision Tree</span>
+              <div class="pred-bar-wrap"><div class="pred-bar" id="barTree"></div></div>
+              <span class="pred-val" id="valTree">—</span>
+            </div>
+            <div class="model-pred-row">
+              <span class="model-tag bag">Bagging ★</span>
+              <div class="pred-bar-wrap"><div class="pred-bar" id="barBag"></div></div>
+              <span class="pred-val" id="valBag">—</span>
+            </div>
+          </div>
+
+          <!-- Feature importance -->
+          <div class="feature-imp glass">
+            <h4>Top Influential Features</h4>
+            <div id="featureBars"></div>
+          </div>
+
+          <!-- Gemini AI explanation -->
+          <div class="gemini-card glass" id="geminiCard" style="display:none">
+            <div class="gemini-header">
+              <span class="gemini-badge">✦ Gemini AI Explanation</span>
+            </div>
+            <p class="gemini-summary" id="geminiSummary"></p>
+            <div class="gemini-grid">
+              <div>
+                <div class="gem-label">Top Factor</div>
+                <div class="gem-val" id="geminiTopFactor">—</div>
+              </div>
+              <div>
+                <div class="gem-label">Career Insight</div>
+                <div class="gem-insight" id="geminiInsight">—</div>
+              </div>
+            </div>
+            <div class="gemini-drivers" id="geminiDrivers"></div>
+          </div>
+
+          <div class="gemini-loading" id="geminiLoading" style="display:none">
+            <div class="loading-dots"><span></span><span></span><span></span></div>
+            <span>Gemini AI is explaining the prediction…</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INSIGHTS ───────────────────────────────────────────────── -->
+<section class="section section-dark" id="insights">
+  <div class="container">
+    <div class="section-header light">
+      <h2>Dataset Insights</h2>
+      <p>Statistical breakdown of the UCI Adult Census dataset used for training.</p>
+    </div>
+    <div class="charts-grid">
+      <div class="chart-card glass-dark">
+        <h4>Salary Distribution</h4>
+        <canvas id="chartSalaryDist" height="200"></canvas>
+      </div>
+      <div class="chart-card glass-dark">
+        <h4>Model Performance Comparison</h4>
+        <canvas id="chartModelPerf" height="200"></canvas>
+      </div>
+      <div class="chart-card glass-dark">
+        <h4>Salary by Occupation</h4>
+        <canvas id="chartOccupation" height="200"></canvas>
+      </div>
+      <div class="chart-card glass-dark">
+        <h4>Education vs Salary Band</h4>
+        <canvas id="chartEduSalary" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ALGORITHMS ─────────────────────────────────────────────── -->
+<section class="section" id="algorithms">
+  <div class="container">
+    <div class="section-header">
+      <h2>ML Algorithms</h2>
+      <p>Five algorithms — supervised, ensemble, and unsupervised — applied to the salary prediction task.</p>
+    </div>
+    <div class="algo-grid">
+      <div class="algo-card glass">
+        <div class="algo-num">01</div>
+        <div class="algo-tag">Supervised</div>
+        <h3>Linear Discriminant Analysis</h3>
+        <p>Finds a linear combination of features that best separates income classes (≤$50K vs &gt;$50K). Used as the classification backbone to calibrate regression output.</p>
+        <div class="algo-metric"><span id="ldaAccDisp">—</span> accuracy</div>
+      </div>
+      <div class="algo-card glass">
+        <div class="algo-num">02</div>
+        <div class="algo-tag">Regression Tree</div>
+        <h3>Decision Tree Regressor</h3>
+        <p>Partitions the feature space by income-relevant splits (occupation, education, hours). Maximum depth of 12 prevents overfitting while capturing non-linearities.</p>
+        <div class="algo-metric"><span id="treeR2Disp">—</span> R² score</div>
+      </div>
+      <div class="algo-card glass">
+        <div class="algo-num">03</div>
+        <div class="algo-tag">Regularized</div>
+        <h3>Ridge Regression</h3>
+        <p>L2-penalized linear regression (α=10) reduces multicollinearity between highly correlated features like education level and occupation. Provides the most interpretable coefficients.</p>
+        <div class="algo-metric"><span id="ridgeR2Disp">—</span> R² score</div>
+      </div>
+      <div class="algo-card glass">
+        <div class="algo-num">04</div>
+        <div class="algo-tag">Ensemble ★</div>
+        <h3>Bagging Regressor</h3>
+        <p>50 bootstrapped Decision Trees trained on 80% random subsamples. Reduces variance and achieves the highest R² through model averaging — the primary prediction backbone.</p>
+        <div class="algo-metric"><span id="bagR2Disp">—</span> R² score · <span id="bagMAEDisp">—</span> MAE</div>
+      </div>
+      <div class="algo-card glass">
+        <div class="algo-num">05</div>
+        <div class="algo-tag">Unsupervised</div>
+        <h3>DBSCAN Clustering</h3>
+        <p>Density-Based Spatial Clustering identifies natural income groups without predefined labels. Detects outliers (workers with atypical capital gains or unusual work patterns).</p>
+        <div class="algo-metric">Clustering · noise detection</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── DBSCAN VISUALIZATION ──────────────────────────────────── -->
+<section class="section section-dark" id="dbscan">
+  <div class="container">
+    <div class="section-header light">
+      <h2>DBSCAN Cluster Visualization</h2>
+      <p>Unsupervised density-based clustering on Education vs Hours-per-week space.</p>
+    </div>
+    <div class="dbscan-wrap glass-dark">
+      <canvas id="dbscanCanvas" width="800" height="420"></canvas>
+      <div class="dbscan-legend" id="dbscanLegend"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VIVA Q&A ───────────────────────────────────────────────── -->
+
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <span class="footer-logo">IncomeML</span>
+      <span class="footer-sub">B.Tech CSE End-to-End ML Project · UCI Adult Dataset</span>
+      <span class="footer-sub">Ridge · DecisionTree · Bagging · LDA · DBSCAN</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/predictor.js"></script>
+</body>
+</html>

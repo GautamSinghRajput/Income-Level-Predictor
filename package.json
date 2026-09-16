@@ -1,0 +1,20 @@
+{
+  "name": "salaryiq-ml-predictor",
+  "version": "2.0.0",
+  "description": "B.Tech CSE End-to-End ML Project – Numeric Salary Predictor with Ridge, Decision Tree, Bagging, LDA, DBSCAN + Gemini AI explanations",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "train": "cd ml && python train_model.py"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
